@@ -4,7 +4,7 @@ import Foundation
 import UIKit
 #endif
 
-public struct Position {
+public class Position: NSObject {
     public let x:Float
     public let y:Float
     public let z:Float?
