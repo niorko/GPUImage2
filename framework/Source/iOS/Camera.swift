@@ -4,7 +4,7 @@ import AVFoundation
 public protocol CameraDelegate {
     func didCaptureBuffer(_ sampleBuffer: CMSampleBuffer)
 }
-public enum PhysicalCameraLocation {
+@objc public enum PhysicalCameraLocation: Int {
     case backFacing
     case frontFacing
     
