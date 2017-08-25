@@ -58,7 +58,21 @@ func averageColorBySequentialReduction(inputFramebuffer:Framebuffer, shader:Shad
     inputFramebuffer.lock()
     var previousFramebuffer = inputFramebuffer
     for currentReduction in 0..<reductionsToHitSideLimit {
-        let currentStageSize = Size(width:Float(floor(Double(inputSize.width) / pow(4.0, Double(currentReduction) + 1.0))), height:Float(floor(Double(inputSize.height) / pow(4.0, Double(currentReduction) + 1.0))))
+        
+        var width = Float(floor(Double(inputSize.width) / pow(4.0, Double(currentReduction) + 1.0)))
+        // Framebuffer's width cannot be less then 2 -> else crash
+        if width < 2 {
+            width = 2
+        }
+        
+        var height = Float(floor(Double(inputSize.height) / pow(4.0, Double(currentReduction) + 1.0)))
+        // Framebuffer's height cannot be less then 2 -> else crash
+        if height < 2 {
+            height = 2
+        }
+        
+        let currentStageSize = Size(width:width, height:height)
+        
         let currentFramebuffer = sharedImageProcessingContext.framebufferCache.requestFramebufferWithProperties(orientation:previousFramebuffer.orientation, size:GLSize(currentStageSize))
         currentFramebuffer.lock()
         uniformSettings["texelWidth"] = 0.25 / currentStageSize.width
