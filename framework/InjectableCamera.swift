@@ -93,17 +93,30 @@ public class InjectableCamera: NSObject, ImageSource {
     }
     
     deinit {
-        sharedImageProcessingContext.runOperationSynchronously {
-            self.videoOutput?.setSampleBufferDelegate(
-                originalCaptureVideoDataOutputDelegate,
-                queue: DispatchQueue.global(qos: .default))
-        }
+        restoreOriginalSampleBufferDelegate()
     }
     
     // MARK: - ImageSource
     
     public func transmitPreviousImage(to target: ImageConsumer, atIndex: UInt) {
         // Implementation is not needed for camera input
+    }
+    
+    /// This method has to be called before deinit;
+    /// else camera input from session could not work
+    public func clean() {
+        restoreOriginalSampleBufferDelegate()
+    }
+    
+    /// If InjectableCamere is going to be deinit or targets are
+    /// going to be removed -> restore the original sample buffer delegate
+    private func restoreOriginalSampleBufferDelegate() {
+        sharedImageProcessingContext.runOperationSynchronously {
+            self.videoOutput?.setSampleBufferDelegate(
+                originalCaptureVideoDataOutputDelegate,
+                queue: DispatchQueue.global(qos: .default))
+            self.videoOutput = nil
+        }
     }
 }
 
